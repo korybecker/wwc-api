@@ -1,27 +1,27 @@
 import express from "express";
-const cors = require("cors");
+import bodyParser from "body-parser";
+import chats from "./routes/chat.route";
+import connectDB from "./db/connect";
+import config from "./config/config";
 
 const app = express();
 
 // middleware
-app.use(express.json());
-app.use(cors());
+app.use(bodyParser.json());
 
-app.listen(3001, () => {
-  console.log("joe");
-});
+// // routes
 
-// // currying middleware
-// const middleware =
-//   ({ name }: { name: string }) =>
-//   (req: Request, res: Response, next: NextFunction) => {
-//     res.locals.name = name;
-//     next();
-//   };
-// app.use(middleware({ name: "Bob" }));
+app.use("/api/v1/chats", chats);
 
-// app.get("/api/books/:bookId/:authorId", (req: Request<{name: "string"}, {}, {name: "string"}>, res: Response) => {
-//   const name = res.locals.name;
-//   const name2 = req.params.name;
-//   const name3 = req.body.name;
-// });
+const PORT = config.server.port || 3001;
+
+const start = async (): Promise<void> => {
+  try {
+    await connectDB(config.mongo.url);
+    app.listen(PORT, () => console.log(`listening on port ${PORT}`));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+start();
