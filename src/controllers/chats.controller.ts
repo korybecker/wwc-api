@@ -15,7 +15,7 @@ const createChat = async (req: Request, res: Response): Promise<void> => {
     const chat = await Chat.create(req.body);
     res.status(201).json({ chat });
   } catch (err) {
-    res.status(500).json({ msg: err });
+    res.status(500).json({ msg: err, body: req.body });
   }
 };
 
@@ -66,7 +66,7 @@ const deleteChat = async (
         .status(404)
         .json({ msg: `no chat exists with id ${req.params.id}` });
     }
-    res.status(200).json({ chat });
+    res.status(200).json({ success: "success" });
   } catch (err) {
     res.status(500).json({ msg: err });
   }
