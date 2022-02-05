@@ -1,9 +1,11 @@
-import { Document } from "mongoose";
+import { Document, Schema, Types } from "mongoose";
+import IUser from "./user.interface";
 
 interface IChat extends Document {
-  title: string;
-  author: string;
-  date: Date;
+  user: Types.ObjectId;
+  text: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export default IChat;
