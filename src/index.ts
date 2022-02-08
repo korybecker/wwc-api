@@ -1,18 +1,18 @@
 import express from "express";
 import bodyParser from "body-parser";
 import chat from "./routes/chat.route";
-import user from "./routes/user.route";
-import register from "./routes/register.route";
 import connectDB from "./db/connect";
 import config from "./config/config";
+import cors from "cors";
 
 const app = express();
 
 // middleware
 app.use(bodyParser.json());
+app.use(cors());
 
 // routes
-app.use("/api/v1", chat, user, register);
+app.use("/api/v1", chat);
 
 const PORT = config.server.port || 3001;
 
