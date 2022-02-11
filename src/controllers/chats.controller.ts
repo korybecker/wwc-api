@@ -1,76 +1,72 @@
 import { Request, Response } from "express";
 import Chat from "../models/chat.model";
+import asyncHandler from "express-async-handler";
 
-const getAllChats = async (req: Request, res: Response): Promise<void> => {
-  try {
+const getAllChats = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
     const chats = await Chat.find({});
-    res.status(200).json({ chats });
-  } catch (err) {
-    res.json(500).json({ msg: err });
+    if (chats) {
+      res.status(200).json({ chats });
+    } else {
+      res.json(500);
+      throw new Error("could not get chats");
+    }
   }
-};
+);
 
-const createChat = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const chat = await Chat.create(req.body);
-    res.status(201).json({ chat });
-  } catch (err) {
-    res.status(500).json({ msg: err, body: req.body });
+const createChat = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const chat = await Chat.create({
+      chatter: req.chatter,
+      key: req.body.key,
+      postText: req.body.postText,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    if (chat) {
+      res.status(201).json({ chat });
+    } else {
+      res.status(500);
+      throw new Error("could not create chat");
+    }
   }
-};
+);
 
-const getSingleChat = async (
-  req: Request,
-  res: Response
-): Promise<void | Response<any, Record<string, any>>> => {
-  try {
+const getSingleChat = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
     const chat = await Chat.findById(req.params.id);
     if (!chat) {
-      return res
-        .status(404)
-        .json({ msg: `no chat exists with id ${req.params.id}` });
+      res.status(404);
+      throw new Error(`could not get chat with id ${req.params.id}`);
     }
-    res.status(200).json({ chat });
-  } catch (err) {
-    res.status(500).json({ msg: err });
+    res.status(200).json(chat);
   }
-};
+);
 
-const updateChat = async (
-  req: Request,
-  res: Response
-): Promise<void | Response<any, Record<string, any>>> => {
-  try {
+const updateChat = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
     const chat = await Chat.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
     if (!chat) {
-      return res
-        .status(404)
-        .json({ msg: `no chat exists with id ${req.params.id}` });
+      res.status(404);
+      throw new Error(`could not get chat with id ${req.params.id}`);
     }
     res.status(200).json({ chat });
-  } catch (err) {
-    res.status(500).json({ msg: err });
   }
-};
+);
 
-const deleteChat = async (
-  req: Request,
-  res: Response
-): Promise<void | Response<any, Record<string, any>>> => {
-  try {
+const deleteChat = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
     const chat = await Chat.findByIdAndDelete(req.params.id);
     if (!chat) {
-      return res
-        .status(404)
-        .json({ msg: `no chat exists with id ${req.params.id}` });
+      res.status(404);
+      throw new Error(`could not get chat with id ${req.params.id}`);
     }
     res.status(200).json({ success: "success" });
-  } catch (err) {
-    res.status(500).json({ msg: err });
   }
-};
+);
 
 const controllers = {
   getAllChats,
