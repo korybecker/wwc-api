@@ -1,7 +1,7 @@
-import mongoose, { Mongoose, Schema, Types } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export interface IChat extends Document {
-  username: string;
+  chatter: Schema.Types.ObjectId;
   key: number;
   postText: string;
   createdAt: Date;
@@ -10,11 +10,26 @@ export interface IChat extends Document {
 
 const ChatSchema: Schema<IChat> = new Schema<IChat>(
   {
-    username: { type: String, min: 3, max: 20 },
+    chatter: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      min: 3,
+      max: 20,
+      ref: "Chatter",
+    },
     key: Number,
-    postText: { type: String, required: true },
-    createdAt: { type: Date, required: true },
-    updatedAt: { type: Date, required: true },
+    postText: {
+      type: String,
+      required: [true, "Please enter text to post"],
+    },
+    createdAt: {
+      type: Date,
+      required: true,
+    },
+    updatedAt: {
+      type: Date,
+      required: true,
+    },
   },
   {
     timestamps: true, // updated at, created at
