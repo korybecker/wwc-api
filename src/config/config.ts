@@ -35,7 +35,6 @@ const SERVER = {
 const config = {
   mongo: MONGO,
   server: SERVER,
-  saltWorkFactor: 13,
 };
 
 export default config;
